@@ -1,5 +1,37 @@
+#timer {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  color: white;
+  text-align: right;
+}
+
 #map {
   width: 100%;
   height: 100vh;
   background-color: blue;
+
+  .currentStop {
+    circle {
+      stroke: red;
+      stroke-width: 0.5;
+      r: 4;
+      fill: none;
+    }
+  }
+
+  .prevStops {
+    circle {
+      fill: green;
+      r: 2;
+    }
+  }
+
+  .path {
+    path {
+      stroke-width: 0.5;
+      stroke: yellow;
+      fill: none;
+    }
+  }
 }

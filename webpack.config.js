@@ -135,10 +135,10 @@ module.exports = function makeWebpackConfig() {
       filename: "./index.html"
   }));
 
-  // config.plugins.push(
-  //   new CopyWebpackPlugin([{
-  //     from: './static', to: './'
-  // }]));
+  config.plugins.push(
+    new CopyWebpackPlugin([{
+      from: './static', to: './'
+  }]));
 
   config.plugins.push(
     new webpack.DefinePlugin({
