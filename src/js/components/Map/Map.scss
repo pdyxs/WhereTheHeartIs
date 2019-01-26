@@ -34,4 +34,19 @@
       fill: none;
     }
   }
+
+  .simulation {
+    .me {
+      fill: grey;
+      r: 3;
+    }
+    .heart {
+      fill: purple;
+      r: 3;
+    }
+    .attachment {
+      fill: teal;
+      r: 1;
+    }
+  }
 }

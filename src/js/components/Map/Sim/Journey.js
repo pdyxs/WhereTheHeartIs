@@ -7,6 +7,7 @@ class Journey {
   constructor() {
     this.current = null;
     this.past = [];
+    this.attachments = [];
     this.time = 0;
   }
 
@@ -41,11 +42,12 @@ class Journey {
     return this.current ? this.time - this.current.startTime : this.time;
   }
 
-  tick (dt) {
+  tick (dt, rdt) {
     if (this.current == null) return;
     this.time += dt;
-    this.current?.tickHere(this.time, dt);
-    _.forEach(this.past, p => p.tickNotHere(dt));
+    this.attachments = _.concat(this.attachments,
+      this.current?.tickHere(this.time, dt, rdt) ?? []);
+    _.forEach(this.past, p => p.tickNotHere(this.time, dt, rdt));
   }
 }
 

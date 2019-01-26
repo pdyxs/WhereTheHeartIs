@@ -8,9 +8,9 @@ import Journey from './Sim/Journey';
 import './Map.scss';
 
 const dayMilliseconds = moment.duration(1, 'day').asMilliseconds();
-const startRate = 1;
-const rateChange = 1/3;
-const maxRate = moment.duration(0.5, 'year').asDays();
+const startRate = 1.5;
+const rateChange = 0.25;
+const maxRate = moment.duration(0.25, 'year').asDays();
 
 class Map extends Component {
   constructor() {
@@ -41,7 +41,7 @@ class Map extends Component {
     var rate = Math.min(maxRate, startRate *
       (1 + moment.duration(this.journey.timeHere()).asDays()) * rateChange);
     var journeyDt = rate * dayMilliseconds * dt / 1000;
-    this.journey.tick(journeyDt);
+    this.journey.tick(journeyDt, dt);
     this.setState({
       time: this.journey.time,
       timeHere: this.journey.timeHere()

@@ -2,6 +2,9 @@ import * as d3 from "d3";
 import topojson from 'topojson';
 import Victor from 'victor';
 import axios from 'axios';
+import stayAtPosition from './Sim/stayAtPosition';
+import forceCollide from './Sim/forceCollide';
+import forceLink from './Sim/link';
 
 import _ from 'lodash';
 
@@ -35,6 +38,9 @@ class D3Map {
     this.pastStops = this.svg.append('g')
         .attr('class', 'prevStops');
 
+    this.simulationParent = this.svg.append('g')
+        .attr('class', 'simulation');
+
     this.journeyPath = this.svg.append('g')
         .attr('class', 'path');
 
@@ -49,21 +55,120 @@ class D3Map {
     this.setupDrag();
   }
 
-  tick(dt) {
-    this.journey.tick(dt);
-  }
-
   update(el, props, prevProps) {
     if (this.journey.current == null) {
       this.setupGeolocation(props);
     }
+
+    if (this.simulationNodes &&
+      this.simulationNodes.length - 2 != this.journey.attachments.length)
+    {
+      this.updateAttachments();
+    }
+  }
+
+  projectedNodePosition(node) {
+    return this.projection([
+      node.x, node.y,
+    ]);
+  }
+
+  updateAttachments = () => {
+    this.simulationNodes = [
+      this.simulatedPerson,
+      this.simulatedHeart,
+      ...this.journey.attachments
+    ];
+    this.simulation.nodes(this.simulationNodes);
+    this.updateSimulatedNodes;
+
+    var that = this;
+    this.forceLink.links(
+      _.reduce(this.simulationNodes,
+        (acc, node, index) => {
+          if (node == that.simulatedHeart) return acc;
+          acc.push({source: index, target: 1});
+          return acc;
+        }, []));
+  }
+
+  updateSimulatedNodes = () => {
+    var nodes = this.simulationParent.selectAll('circle')
+      .data(this.simulationNodes || []);
+
+    nodes.enter().append('circle')
+      .attr('class', d => d.type)
+      .attr('cx', d => this.projectedNodePosition(d)[0])
+      .attr('cy', d => this.projectedNodePosition(d)[1]);
+
+    nodes.attr('class', d => d.type)
+        .attr('cx', d => this.projectedNodePosition(d)[0])
+        .attr('cy', d => this.projectedNodePosition(d)[1]);
+  }
+
+  moveSimulatedPerson() {
+    this.simulatedPerson.position = this.journey.current.position;
+    // this.updateSimulatedNodes();
+  }
+
+  setupSimulation() {
+    this.simulatedPerson = {
+      position: this.journey.current.position,
+      x: this.journey.current.position[0],
+      y: this.journey.current.position[1],
+      type: 'me'
+    };
+
+    this.simulatedHeart = {
+      x: this.journey.current.position[0],
+      y: this.journey.current.position[1],
+      type: 'heart'
+    };
+    this.simulationNodes = [
+      this.simulatedPerson,
+      this.simulatedHeart
+    ];
+
+    this.simulation = d3.forceSimulation(this.simulationNodes);
+    this.simulation.alphaTarget(.25);
+
+    this.forceLink = forceLink([
+      {source: 0, target: 1}
+    ]).distance(0);
+    this.simulation.force("towardsPlayer", this.forceLink);
+
+    this.simulation.force("stayHome", stayAtPosition());
+
+    this.simulation.force("collision",
+      forceCollide(
+        d => d.type == 'me' ? 2 : 1
+      )
+    );
+
+    this.simulation.on("tick", this.updateSimulatedNodes)
   }
 
   setupGeolocation(props) {
     if (props.isGeolocationAvailable && props.isGeolocationEnabled && props.coords) {
-      this.journey.goTo([props.coords.longitude, props.coords.latitude]);
+      this.goToPlace([props.coords.longitude, props.coords.latitude]);
       this.rotateTo([-props.coords.longitude, -props.coords.latitude]);
     }
+  }
+
+  goToPlace(coords) {
+    var isFirst = this.journey.current == null;
+    this.journey.goTo(coords);
+    this.updateJourney();
+    if (isFirst) {
+      this.setupSimulation();
+    } else {
+      this.moveSimulatedPerson();
+    }
+  }
+
+  onCountryClicked = () => {
+    var pos = this.projection.invert(d3.mouse(this.svg.node()));
+    this.goToPlace(pos);
   }
 
   loadCountries() {
@@ -74,11 +179,7 @@ class D3Map {
         .append('path')
           .attr('class', 'country')
           .attr('d', this.countriesPath)
-          .on('click', () => {
-            var pos = this.projection.invert(d3.mouse(this.svg.node()));
-            this.journey.goTo(pos);
-            this.updateJourney();
-          });
+          .on('click', this.onCountryClicked);
       });
   }
 
@@ -118,6 +219,7 @@ class D3Map {
     this.countries.selectAll('path').attr("d", this.countriesPath);
     this.centrePos = this.projection.invert([0,0]);
     this.updateJourney();
+    // this.updateSimulatedNodes();
   }
 
   updatePoints(points) {
@@ -162,7 +264,7 @@ class D3Map {
 
     var doPath = (d) => {
       var dist = d3.geoDistance(d[0], d[1]);
-      var minSize = 0.01;
+      var minSize = 0.03;
       var intervals = Math.ceil(dist/minSize);
       if (intervals % 2 == 1) intervals++;
       var interpolate = d3.geoInterpolate(d[0], d[1]);
