@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="wtf.pdyxs.wheretheheartis" version="0.1.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+    <name>Where the Heart is</name>
+    <description>
+        Where the Heart is
+    </description>
+    <author email="talk@pdyxs.wtf" href="http://pdyxs.wtf">
+        Paul Sztajer
+    </author>
+    <content src="index.html" />
+    <access origin="*" />
+</widget>
