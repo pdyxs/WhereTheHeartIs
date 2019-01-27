@@ -30,7 +30,7 @@ class Home extends Component {
             Made by <a href="https://pdyxs.wtf" target="_blank">PDYXS</a> for <a href="https://globalgamejam.org/" target="_blank">Global Game Jam 2019</a>
           </div>
         </div>
-        <div className="text-center mt-4">
+        <div className="text-center my-4">
           <Link role="button"
             className="btn btn-lg btn-primary mx-2"
             to={{
@@ -56,6 +56,30 @@ class Home extends Component {
             }}>
             Choose where to begin
           </Link>
+        </div>
+        <div>
+          <p className="lead">This is an open-source project.
+            You can get the source code <a href="https://github.com/pdyxs/WhereTheHeartIs">here</a>.</p>
+        </div>
+        <div>
+          <h4>Things I used:</h4>
+          <dl className="row">
+            <dt className="col-3">Icons from</dt>
+            <dd className="col-9">
+              <a href="https://fontawesome.com" target="_blank">FontAwesome</a>
+            </dd>
+
+            <dt className="col-3">Emoji from</dt>
+            <dd className="col-9">
+              <a href="https://twemoji.twitter.com/" target="_blank">Twemoji</a>
+            </dd>
+
+            <dt className="col-3">Map data from</dt>
+            <dd className="col-9">
+              <a href="http://naturalearthdata.com/" target="_blank">Natural Earth</a>
+              , courtesy of <a href="https://geojson-maps.ash.ms/" target="_blank">Ash Kyd</a>
+            </dd>
+          </dl>
         </div>
       </div>
     );
