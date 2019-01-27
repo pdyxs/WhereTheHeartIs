@@ -49,7 +49,7 @@ export default function(radius) {
           if (l < r * r) {
             if (x === 0) x = jiggle(), l += x * x;
             if (y === 0) y = jiggle(), l += y * y;
-            l = (r - (l = Math.sqrt(l))) / l * strength;
+            l = (r - (l = Math.sqrt(l))) / l * (node.type == 'me' ? strength : strength / 2);
             node.vx += (x *= l) * (r = (rj *= rj) / (ri2 + rj));
             node.vy += (y *= l) * r;
             data.vx -= x * (r = 1 - r);

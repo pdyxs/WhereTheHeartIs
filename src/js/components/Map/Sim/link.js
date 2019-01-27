@@ -46,15 +46,8 @@ export default function(links) {
         while (np[0] <= -180) np += 360;
         while (np[1] > 90) np -= 180;
         while (np[1] <= -90) np += 180;
-        // x = target.x + target.vx - source.x - source.vx || jiggle();
-        // y = target.y + target.vy - source.y - source.vy || jiggle();
-        // l = Math.sqrt(x * x + y * y);
-        // l = (l - distances[i]) / l * alpha * strengths[i];
-        // x *= l, y *= l;
         target.vx += np[0] * (b = bias[i]);
         target.vy += np[1] * b;
-        // source.vx += np[0] * (b = 1 - b);
-        // source.vy += np[1] * b;
       }
     }
   }

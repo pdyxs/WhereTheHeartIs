@@ -38,6 +38,9 @@ class D3Map {
     this.pastStops = this.svg.append('g')
         .attr('class', 'prevStops');
 
+    this.stringsParent = this.svg.append('g')
+        .attr('class', 'strings');
+
     this.simulationParent = this.svg.append('g')
         .attr('class', 'simulation');
 
@@ -83,13 +86,14 @@ class D3Map {
     this.updateSimulatedNodes;
 
     var that = this;
-    this.forceLink.links(
+    this.forceEdges =
       _.reduce(this.simulationNodes,
         (acc, node, index) => {
           if (node == that.simulatedHeart) return acc;
           acc.push({source: index, target: 1});
           return acc;
-        }, []));
+        }, []);
+    this.forceLink.links(this.forceEdges);
   }
 
   updateSimulatedNodes = () => {
@@ -104,6 +108,21 @@ class D3Map {
     nodes.attr('class', d => d.type)
         .attr('cx', d => this.projectedNodePosition(d)[0])
         .attr('cy', d => this.projectedNodePosition(d)[1]);
+
+    var strings = this.stringsParent.selectAll('path')
+      .data(this.forceEdges);
+
+    var positionFromLink = (link) => {
+      return [
+        [link.source.x, link.source.y],
+        [link.target.x, link.target.y]
+      ];
+    };
+    strings.enter().append('path')
+      .attr('class', 'string')
+      .attr('d', d => this.buildPathBetween(0)(positionFromLink(d)));
+
+    strings.attr('d', d => this.buildPathBetween(0)(positionFromLink(d)));
   }
 
   moveSimulatedPerson() {
@@ -132,9 +151,10 @@ class D3Map {
     this.simulation = d3.forceSimulation(this.simulationNodes);
     this.simulation.alphaTarget(.25);
 
-    this.forceLink = forceLink([
+    this.forceEdges = [
       {source: 0, target: 1}
-    ]).distance(0);
+    ];
+    this.forceLink = forceLink(this.forceEdges).distance(0);
     this.simulation.force("towardsPlayer", this.forceLink);
 
     this.simulation.force("stayHome", stayAtPosition());
@@ -258,40 +278,41 @@ class D3Map {
     this.updateJourneyPaths();
   }
 
+  buildPathBetween = (extraHeight) => ((d) => {
+    var dist = d3.geoDistance(d[0], d[1]);
+    if (dist == 0) return '';
+    var minSize = 0.03;
+    var intervals = Math.ceil(dist/minSize);
+    if (intervals % 2 == 1) intervals++;
+    var interpolate = d3.geoInterpolate(d[0], d[1]);
+    var maxHeight = dist * extraHeight;
+    var proj = this.makeProjection(countriesScale()).rotate(this.projection.rotate());
+    var points = [];
+    for (var i = 0; i <= intervals; ++i) {
+      var p = interpolate(i/intervals);
+      var cdist = d3.geoDistance(p, this.centrePos);
+      if (cdist > Math.PI/2) continue;
+
+      var heightRatio = (1 - Math.abs(0.5 - i/intervals) * 2);
+      heightRatio = Math.sqrt(1 - (1 - heightRatio) * (1 - heightRatio));
+      var newScale = countriesScale() + maxHeight * heightRatio;
+      proj.scale(newScale);
+      points.push(_.join(proj(p)));
+    }
+    if (points.length == 0) return '';
+    return `M${_.join(points, ' ')}`;
+  });
+
   updateJourneyPaths() {
     var journeyLines = this.journeyPath.selectAll('path')
       .data(this.journey.paths());
 
-    var doPath = (d) => {
-      var dist = d3.geoDistance(d[0], d[1]);
-      var minSize = 0.03;
-      var intervals = Math.ceil(dist/minSize);
-      if (intervals % 2 == 1) intervals++;
-      var interpolate = d3.geoInterpolate(d[0], d[1]);
-      var maxHeight = dist * 10;
-      var proj = this.makeProjection(countriesScale()).rotate(this.projection.rotate());
-      var points = [];
-      for (var i = 0; i <= intervals; ++i) {
-        var p = interpolate(i/intervals);
-        var cdist = d3.geoDistance(p, this.centrePos);
-        if (cdist > Math.PI/2) continue;
-
-        var heightRatio = (1 - Math.abs(0.5 - i/intervals) * 2);
-        heightRatio = Math.sqrt(1 - (1 - heightRatio) * (1 - heightRatio));
-        var newScale = countriesScale() + maxHeight * heightRatio;
-        proj.scale(newScale);
-        points.push(_.join(proj(p)));
-      }
-      if (points.length == 0) return '';
-      return `M${_.join(points, ' ')}`;
-    };
-
     journeyLines.enter()
       .append('path')
       .attr('class', 'path')
-      .attr('d', doPath);
+      .attr('d', this.buildPathBetween(10));
 
-    journeyLines.attr('d', doPath);
+    journeyLines.attr('d', this.buildPathBetween(10));
   }
 
   makeProjection(s = countriesScale()) {
