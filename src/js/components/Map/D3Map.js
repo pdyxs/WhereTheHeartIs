@@ -6,6 +6,16 @@ import stayAtPosition from './Sim/stayAtPosition';
 import forceCollide from './Sim/forceCollide';
 import forceLink from './Sim/link';
 
+import circle from './svg/circle.svg';
+import heart from './svg/heart.svg';
+import user from './svg/user.svg';
+
+const images = {
+  circle,
+  heart,
+  user
+};
+
 import _ from 'lodash';
 
 function isTouchDevice(){
@@ -56,6 +66,12 @@ class D3Map {
 
     this.loadCountries();
     this.setupDrag();
+
+    this.setupImages();
+  }
+
+  setupImages() {
+    
   }
 
   update(el, props, prevProps) {
@@ -80,7 +96,7 @@ class D3Map {
     this.simulationNodes = [
       this.simulatedPerson,
       this.simulatedHeart,
-      ...this.journey.attachments
+      ...this.journey.attachments,
     ];
     this.simulation.nodes(this.simulationNodes);
     this.updateSimulatedNodes;
@@ -97,17 +113,34 @@ class D3Map {
   }
 
   updateSimulatedNodes = () => {
-    var nodes = this.simulationParent.selectAll('circle')
+    var nodes = this.simulationParent.selectAll('svg')
       .data(this.simulationNodes || []);
 
-    nodes.enter().append('circle')
-      .attr('class', d => d.type)
-      .attr('cx', d => this.projectedNodePosition(d)[0])
-      .attr('cy', d => this.projectedNodePosition(d)[1]);
+    var that = this;
+    function updateNodes(nodes) {
+      nodes.attr("x", d => that.projectedNodePosition(d)[0] - d.size/2)
+           .attr("y", d => that.projectedNodePosition(d)[1] - d.size/2)
+           .attr("width", d => d.size)
+           .attr("height", d => d.size)
+           .attr('class', d => `simulatedNode ${d.type}`)
+           .classed("d-none", function(d) {
+              var d = d3.geoDistance([d.x, d.y], centrePos);
+              return (d > Math.PI / 2);
+            });
+      return nodes;
+    }
 
-    nodes.attr('class', d => d.type)
-        .attr('cx', d => this.projectedNodePosition(d)[0])
-        .attr('cy', d => this.projectedNodePosition(d)[1]);
+    var centrePos = this.centrePos;
+    var entering = nodes.enter();
+    entering.select(d => {
+      var range = document.createRange();
+      var documentFragment = range.createContextualFragment(images[d.image]);
+      return this.simulationParent.node().appendChild(documentFragment);
+    });
+    updateNodes(
+      entering.select('svg')
+    );
+    updateNodes(nodes);
 
     var strings = this.stringsParent.selectAll('path')
       .data(this.forceEdges);
@@ -127,7 +160,6 @@ class D3Map {
 
   moveSimulatedPerson() {
     this.simulatedPerson.position = this.journey.current.position;
-    // this.updateSimulatedNodes();
   }
 
   setupSimulation() {
@@ -135,13 +167,19 @@ class D3Map {
       position: this.journey.current.position,
       x: this.journey.current.position[0],
       y: this.journey.current.position[1],
-      type: 'me'
+      type: 'me',
+      image: 'user',
+      size: 6,
+      order: 1
     };
 
     this.simulatedHeart = {
       x: this.journey.current.position[0],
       y: this.journey.current.position[1],
-      type: 'heart'
+      type: 'heart',
+      image: 'heart',
+      size: 6,
+      order: 3
     };
     this.simulationNodes = [
       this.simulatedPerson,

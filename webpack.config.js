@@ -20,7 +20,8 @@ var buildTimestamp =  to2Digits(now.getUTCHours()) +
  * Get npm lifecycle event to identify the environment
  */
 var ENV = process.env.npm_lifecycle_event;
-var isProd = (ENV === 'build' || ENV === 'deploy');
+var isProd = (ENV === 'build' || ENV === 'build-mobile' || ENV === 'deploy');
+var isCompressed = isProd && ENV !== 'build-mobile';
 
 module.exports = function makeWebpackConfig() {
   var config = {};
@@ -117,6 +118,10 @@ module.exports = function makeWebpackConfig() {
       {
         test: /\.md$/,
         use: 'raw-loader'
+      },
+      {
+        test: /\.svg$/,
+        use: 'raw-loader'
       }
     ]
   };
@@ -124,9 +129,13 @@ module.exports = function makeWebpackConfig() {
   config.plugins = [];
   if (isProd) {
     config.plugins = [
-      new DuplicatePackageCheckerPlugin(),
-      // new webpack.optimize.UglifyJsPlugin()
+      new DuplicatePackageCheckerPlugin()
     ];
+    if (isCompressed) {
+      config.plugins.push(
+        new webpack.optimize.UglifyJsPlugin()
+      );
+    }
   }
 
   config.plugins.push(

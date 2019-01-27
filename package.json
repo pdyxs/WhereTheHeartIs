@@ -5,8 +5,9 @@
   "scripts": {
     "build-icons": "cd windowdresser && npm install && node windowdresser.js",
     "build": "webpack",
+    "build-mobile": "webpack",
     "start": "webpack --watch",
-    "deploy": "webpack && surge ./dist"
+    "deploy": "webpack && surge ./www"
   },
   "repository": {
     "type": "git",

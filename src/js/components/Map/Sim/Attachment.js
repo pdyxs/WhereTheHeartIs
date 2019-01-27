@@ -9,6 +9,9 @@ export default class Attachment {
     this.x = position[0];
     this.y = position[1];
     this.type = 'attachment';
+    this.image = 'circle';
+    this.size = 2;
+    this.order = 2;
   }
 
   tickHere(dt) {

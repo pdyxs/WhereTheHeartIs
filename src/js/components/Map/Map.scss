@@ -15,8 +15,8 @@
     circle {
       stroke: red;
       stroke-width: 0.5;
-      r: 4;
-      fill: none;
+      r: 4.2;
+      fill: rgba(200,120,120,0.8);
     }
   }
 
@@ -36,17 +36,27 @@
   }
 
   .simulation {
-    .me {
+    svg {
+      display: none;
+
+      &.simulatedNode {
+        display: inline;
+      }
+    }
+
+    .me path {
       fill: grey;
-      r: 3;
+      color: grey;
     }
     .heart {
-      fill: purple;
-      r: 3;
+      path {
+        fill: purple;
+        color: purple;
+      }
     }
-    .attachment {
+    .attachment path {
       fill: teal;
-      r: 1;
+      color: teal;
     }
   }
 
