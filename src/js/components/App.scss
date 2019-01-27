@@ -1,7 +1,17 @@
 //Bootstrap
 @import "node_modules/bootstrap/scss/bootstrap";
+@import "node_modules/animate-scss/animate.scss";
 
 .map-container {
   width: 100vw;
   height: 100vh;
+}
+
+.heart {
+  font-size: 60px;
+  @include pulse(
+    $count: infinite,
+    $duration: 2s,
+    $function: ease-in-out
+  );
 }

@@ -23,7 +23,7 @@ const PLATFORM_MOBILE = "mobile";
  * Get npm lifecycle event to identify the environment
  */
 var ENV = process.env.npm_lifecycle_event;
-var PLATFORM = ENV.includes('mobile') ? PLATFORM_MOBILE : PLATFORM_WEB;
+var PLATFORM = ENV.includes('web') ? PLATFORM_WEB : PLATFORM_MOBILE;
 var isProd = (ENV === 'build-web' || ENV === 'build-mobile' || ENV === 'deploy-web');
 var isCompressed = isProd && ENV !== 'build-mobile';
 

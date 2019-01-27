@@ -26,7 +26,8 @@ const dragSpeed = 0.05;
 const maxPhi = 70;
 
 class D3Map {
-  constructor(el, journey, props) {
+  constructor(el, journey, props, coords) {
+    this.startCoords = coords;
     this.svg = d3.select(el);
     this.svg.append('circle')
         .attr('r', globeSize)
@@ -61,10 +62,6 @@ class D3Map {
   }
 
   update(el, props, prevProps) {
-    if (this.journey.current == null) {
-      this.setupGeolocation(props);
-    }
-
     if (this.simulationNodes &&
       this.simulationNodes.length - 2 != this.journey.attachments.length)
     {
@@ -187,11 +184,9 @@ class D3Map {
     this.simulation.on("tick", this.updateSimulatedNodes)
   }
 
-  setupGeolocation(props) {
-    if (props.isGeolocationAvailable && props.isGeolocationEnabled && props.coords) {
-      this.goToPlace([props.coords.longitude, props.coords.latitude]);
-      this.rotateTo([-props.coords.longitude, -props.coords.latitude]);
-    }
+  setupGeolocation(coords) {
+    this.goToPlace(coords);
+    this.rotateTo([-coords[0], -coords[1]]);
   }
 
   goToPlace(coords) {
@@ -219,6 +214,10 @@ class D3Map {
           .attr('class', 'country')
           .attr('d', this.countriesPath)
           .on('click', this.onCountryClicked);
+
+        if (this.startCoords != null) {
+          this.setupGeolocation(this.startCoords);
+        }
       });
   }
 

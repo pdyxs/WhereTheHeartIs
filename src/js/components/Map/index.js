@@ -2,6 +2,7 @@ import React, { Component, Fragment } from "react";
 import moment from 'moment';
 import D3Map from './D3Map';
 import {geolocated} from 'react-geolocated';
+import {withRouter} from 'react-router-dom';
 
 import Journey from './Sim/Journey';
 
@@ -23,7 +24,10 @@ class Map extends Component {
 
   componentDidMount() {
     this.journey = new Journey();
-    this.map = new D3Map(this._rootNode, this.journey, this.props);
+    var coords = this.props.location.state?.useCoords ?
+      [this.props.location.state.longitude, this.props.location.state.latitude] :
+      null;
+    this.map = new D3Map(this._rootNode, this.journey, this.props, coords);
 
     this.firstUpdate = moment();
     this.lastUpdated = this.firstUpdate.valueOf();
@@ -96,4 +100,4 @@ class Map extends Component {
   }
 }
 
-export default geolocated()(Map);
+export default withRouter(Map);
