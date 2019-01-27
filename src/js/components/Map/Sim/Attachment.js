@@ -1,8 +1,14 @@
 import _ from 'lodash';
 import moment from 'moment';
 import { getRandomSVG } from '../svg';
-import cities from 'cities.json';
 import * as d3 from 'd3';
+import axios from 'axios';
+
+var cities = [];
+axios.get('/cities.json')
+  .then(res => {
+    cities = res.data;
+  });
 
 const quadtree = d3.quadtree(_.map(cities, c => [c.lng, c.lat]));
 
@@ -75,7 +81,10 @@ export default class Attachment {
       } else {
         this.timeToNextTravel -= dt;
         if (this.timeToNextTravel <= 0) {
-          this.position = randomPlace();
+          if (cities.length > 0)
+          {
+            this.position = randomPlace();
+          }
           this.initTimeToNextTravel();
         }
       }
