@@ -118,10 +118,9 @@ class D3Map {
 
     var centrePos = this.centrePos;
     var entering = nodes.enter();
-    entering.select(d => createSVG(this.simulationParent, d.image));
-    updateNodes(
-      entering.select('svg')
-    );
+    updateNodes(entering.select(
+      d => createSVG(this.simulationParent, d.image)
+    ));
     updateNodes(nodes);
 
     var strings = this.stringsParent.selectAll('path')

@@ -13,7 +13,9 @@ const images = {
 const createSVG = (parent, name) => {
   var range = document.createRange();
   var documentFragment = range.createContextualFragment(images[name]);
-  return parent.node().appendChild(documentFragment);
+  var ret = documentFragment.firstElementChild;
+  parent.node().appendChild(documentFragment);
+  return ret;
 }
 
 export default createSVG;
