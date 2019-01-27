@@ -24,6 +24,11 @@ var scale = 1;
 const countriesScale = () => countriesSize * scale;
 const pathScale = () => pathSize * scale;
 
+const globeColours = d3.interpolate(
+  {colors: ["#888888", "#555555", "#000000"]},
+  {colors: ["#60E0DC", "#21B256", "#222299"]}
+);
+
 //dragging stuff
 const dragSpeed = 0.05;
 const maxPhi = 70;
@@ -34,9 +39,11 @@ class D3Map {
       this.startCoords = coords;
 
     this.svg = d3.select(el);
-    this.svg.append('circle')
+    this.svg.style('background-color', globeColours(0).colors[2])
+    this.ocean = this.svg.append('circle')
         .attr('r', globeSize)
-        .attr('class','ocean');
+        .attr('class','ocean')
+        .attr('fill', globeColours(0).colors[0]);
 
     this.countries = this.svg.append('g')
         .attr('class', 'countries');
@@ -105,6 +112,17 @@ class D3Map {
   }
 
   updateSimulatedNodes = () => {
+    var happiness = _.reduce(this.journey.attachments,
+      (acc, attachment, index) => {
+        var dist = d3.geoDistance(this.simulatedPerson.position, attachment.position);
+        return acc + 1 / (Math.max(1, dist * 8));
+      }, 0);
+    happiness = Math.min(1, happiness/10);
+    var colours = globeColours(happiness).colors;
+    this.ocean.attr('fill', colours[0]);
+    this.countries.selectAll('.country').attr('fill', colours[1]);
+    this.svg.style('background-color', colours[2])
+
     var nodes = this.simulationParent.selectAll('svg.simulatedNode')
       .data(this.simulationNodes || []);
 
@@ -281,6 +299,7 @@ class D3Map {
         .append('path')
           .attr('class', 'country')
           .attr('d', this.countriesPath)
+          .attr('fill', globeColours(0).colors[1])
           .on('click', this.onCountryClicked);
 
         if (this.startCoords != null) {

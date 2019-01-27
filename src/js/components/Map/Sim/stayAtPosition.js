@@ -16,7 +16,7 @@ export default function() {
           var dx = node.x - node.position[0];
           var dy = node.y - node.position[1];
           var dist = Math.sqrt(dx*dx + dy*dy);
-          var k = dist * 0.1;
+          var k = dist * 0.005;
           node.vx = -dx * k;
           node.vy = -dy * k;
         }

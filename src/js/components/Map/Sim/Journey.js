@@ -48,6 +48,7 @@ class Journey {
     this.attachments = _.concat(this.attachments,
       this.current?.tickHere(this.time, dt, rdt) ?? []);
     _.forEach(this.past, p => p.tickNotHere(this.time, dt, rdt));
+    _.forEach(this.attachments, a => a.tick(this.current.position, dt, rdt));
   }
 }
 

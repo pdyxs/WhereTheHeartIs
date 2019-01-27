@@ -1,6 +1,6 @@
-$land: #21B256;
-$land-outline: rgba(50,50,50,0.25);
-$ocean: #60E0DC;
+// $land: #21B256;
+$land-outline: rgba(50,50,50,0.5);
+// $ocean: #60E0DC;
 
 #timer {
   position: absolute;
@@ -12,16 +12,16 @@ $ocean: #60E0DC;
 #map {
   width: 100%;
   height: 100%;
-  background-color: black;
+  // background-color: black;
 
   .country {
-    fill: $land;
+    // fill: $land;
     stroke-width: 0.15;
     stroke: $land-outline;
   }
 
   .ocean {
-    fill: $ocean;
+    // fill: $ocean;
   }
 
   .currentStop {

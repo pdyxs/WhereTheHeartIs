@@ -8,11 +8,12 @@ export default class Place {
   constructor(location, time) {
     this.position = location;
     this.startTime = time;
+    this.goodness = _.random(1, 3, true);
     this.setupTimeToNextAttachment();
   }
 
   setupTimeToNextAttachment() {
-    this.timeToNextAttachment = Math.sqrt(_.random(2, 5, true));
+    this.timeToNextAttachment = Math.pow(_.random(this.goodness - 0.5, this.goodness + 0.5, true), 2);
   }
 
   end(time) {
