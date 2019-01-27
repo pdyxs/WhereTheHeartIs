@@ -45,10 +45,14 @@ class Home extends Component {
             data-toggle="tooltip" data-placement="top" title="Tooltip on top">
             Begin at your location
           </Link>
-          <Link role="button" className="btn btn-lg btn-primary mx-2"
+          <Link role="button" className="btn btn-lg btn-primary mx-2 my-2"
             to={{
               pathname: "/map",
-              state: {useCoords: false}
+              state: {
+                useCoords: false,
+                longitude: coords?.longitude,
+                latitude: coords?.latitude
+              }
             }}>
             Choose where to begin
           </Link>

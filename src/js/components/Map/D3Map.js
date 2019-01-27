@@ -14,8 +14,8 @@ function isTouchDevice(){
     return true == ("ontouchstart" in window || window.DocumentTouch && document instanceof DocumentTouch);
 }
 
-const globeSize = 99;
-const countriesSize = globeSize + 1;
+const globeSize = 99.75;
+const countriesSize = globeSize + .25;
 const pathSize = countriesSize + 10;
 var scale = 1;
 const countriesScale = () => countriesSize * scale;
@@ -26,12 +26,14 @@ const dragSpeed = 0.05;
 const maxPhi = 70;
 
 class D3Map {
-  constructor(el, journey, props, coords) {
-    this.startCoords = coords;
+  constructor(el, journey, props, coords, useCoords) {
+    if (useCoords)
+      this.startCoords = coords;
+
     this.svg = d3.select(el);
     this.svg.append('circle')
         .attr('r', globeSize)
-        .attr('fill','white');
+        .attr('class','ocean');
 
     this.countries = this.svg.append('g')
         .attr('class', 'countries');
@@ -59,6 +61,10 @@ class D3Map {
 
     this.loadCountries();
     this.setupDrag();
+
+    if (coords) {
+      this.rotateTo([-coords[0], -coords[1]]);
+    }
   }
 
   update(el, props, prevProps) {
@@ -186,7 +192,7 @@ class D3Map {
 
   setupGeolocation(coords) {
     this.goToPlace(coords);
-    this.rotateTo([-coords[0], -coords[1]]);
+    // this.rotateTo([-coords[0], -coords[1]]);
   }
 
   goToPlace(coords) {
@@ -336,6 +342,10 @@ class D3Map {
                         .scale(s)
                         .translate([0,0])
                         .clipAngle(90);
+  }
+
+  end() {
+    this.countries.selectAll('.country').on('click', () => {});
   }
 
   destroy(el) {

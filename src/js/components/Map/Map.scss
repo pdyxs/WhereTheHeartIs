@@ -1,15 +1,30 @@
+@import "node_modules/animate-scss/animate.scss";
+
+$land: #21B256;
+$land-outline: rgba(50,50,50,0.25);
+$ocean: #60E0DC;
+
 #timer {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  color: white;
-  text-align: right;
+  top: 15px;
+  right: 15px;
+  width: 345px;
 }
 
 #map {
   width: 100%;
   height: 100%;
-  background-color: blue;
+  background-color: black;
+
+  .country {
+    fill: $land;
+    stroke-width: 0.15;
+    stroke: $land-outline;
+  }
+
+  .ocean {
+    fill: $ocean;
+  }
 
   .currentStop {
     circle {
