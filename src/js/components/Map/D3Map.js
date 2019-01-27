@@ -6,7 +6,10 @@ import stayAtPosition from './Sim/stayAtPosition';
 import forceCollide from './Sim/forceCollide';
 import forceLink from './Sim/link';
 
-import createSVG from './svg';
+import {
+  attachNamedSVG,
+  attachSVG
+} from './svg';
 
 import _ from 'lodash';
 
@@ -102,7 +105,7 @@ class D3Map {
   }
 
   updateSimulatedNodes = () => {
-    var nodes = this.simulationParent.selectAll('svg')
+    var nodes = this.simulationParent.selectAll('svg.simulatedNode')
       .data(this.simulationNodes || []);
 
     var that = this;
@@ -119,11 +122,70 @@ class D3Map {
       return nodes;
     }
 
+    const commentSize = 5000;
+    function createAttachmentNodes(nodes) {
+      var attachmentsvgs = [];
+      nodes.each(d => attachmentsvgs.push(d.svg));
+      var svgs = nodes.select((d, i, j) => attachNamedSVG(j[i], 'comment'))
+        .attr("width", commentSize)
+        .attr("height", 0)
+        .attr("x", -commentSize * 0.45)
+        .attr("y", 0)
+        .attr("class", 'comment');
+      svgs.select((d,i,j) => attachSVG(j[i], attachmentsvgs[i]))
+          .attr("x", 25)
+          .attr("y", 25)
+          .attr("width", 462)
+          .attr("height", 370)
+          .attr("class", "attachmentSpecifier")
+      svgs.transition()
+          .attr("height", commentSize)
+          .attr("y", -commentSize);
+      svgs.transition()
+          .delay(2000)
+          .attr("height", 0)
+          .attr("y", 0)
+          .end().then(
+            () => {
+              svgs.remove();
+              nodes.on("mouseover", (el, i, j) => {
+                if (d3.select(j[i]).selectAll('svg.comment').size() > 0) return;
+                var svg = d3.select(attachNamedSVG(j[i], 'comment'))
+                    .attr("width", commentSize)
+                    .attr("height", 0)
+                    .attr("x", -commentSize * 0.45)
+                    .attr("y", 0)
+                    .attr("class", 'comment');
+                svg.transition()
+                    .attr("height", commentSize)
+                    .attr("y", -commentSize);
+                svg.select((d,i,j) => attachSVG(j[i], attachmentsvgs[i]))
+                    .attr("x", 25)
+                    .attr("y", 25)
+                    .attr("width", 462)
+                    .attr("height", 370)
+                    .attr("class", "attachmentSpecifier");
+              }).on("mouseout", (el, i, j) => {
+                  var svg = d3.select(j[i]).selectAll("svg.comment");
+                  svg.transition()
+                      .attr("height", 0)
+                      .attr("y", 0)
+                      .end().then(
+                        () => svg?.remove()
+                      );
+              });
+            }
+          );
+    }
+
     var centrePos = this.centrePos;
-    var entering = nodes.enter();
-    updateNodes(entering.select(
-      d => createSVG(this.simulationParent, d.image)
-    ));
+    createAttachmentNodes(
+      updateNodes(
+        nodes.enter().select(
+          d => attachNamedSVG(this.simulationParent, d.image)
+        )
+      ).filter(d => _.includes(d.type, 'attachment'))
+    );
     updateNodes(nodes);
 
     var strings = this.stringsParent.selectAll('path')

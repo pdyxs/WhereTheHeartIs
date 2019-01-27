@@ -1,0 +1,38 @@
+import svg_1f3e3 from './places/1f3e3.svg';
+import svg_1f308 from './places/1f308.svg';
+import svg_1f3e2 from './places/1f3e2.svg';
+import svg_1f309 from './places/1f309.svg';
+import svg_1f3d6 from './places/1f3d6.svg';
+import svg_1f3d4 from './places/1f3d4.svg';
+import svg_1f3ef from './places/1f3ef.svg';
+import svg_1f3db from './places/1f3db.svg';
+import svg_1f3dc from './places/1f3dc.svg';
+import svg_1f3d5 from './places/1f3d5.svg';
+import svg_1f3e1 from './places/1f3e1.svg';
+import svg_1f3e4 from './places/1f3e4.svg';
+import svg_1f3df from './places/1f3df.svg';
+import svg_1f3dd from './places/1f3dd.svg';
+import svg_1f3e6 from './places/1f3e6.svg';
+import svg_1f3de from './places/1f3de.svg';
+import svg_1f54c from './places/1f54c.svg';
+import svg_1f386 from './places/1f386.svg';
+import svg_1f387 from './places/1f387.svg';
+import svg_1f54d from './places/1f54d.svg';
+import svg_1f3a1 from './places/1f3a1.svg';
+import svg_1f3a2 from './places/1f3a2.svg';
+import svg_1f303 from './places/1f303.svg';
+import svg_1f6a0 from './places/1f6a0.svg';
+import svg_1f307 from './places/1f307.svg';
+import svg_1f3f0 from './places/1f3f0.svg';
+import svg_1f306 from './places/1f306.svg';
+import svg_1f3d9 from './places/1f3d9.svg';
+import svg_1f5fc from './places/1f5fc.svg';
+import svg_1f304 from './places/1f304.svg';
+import svg_1f30b from './places/1f30b.svg';
+import svg_1f30c from './places/1f30c.svg';
+import svg_1f305 from './places/1f305.svg';
+import svg_1f5fb from './places/1f5fb.svg';
+
+const places = [svg_1f3e3, svg_1f308, svg_1f3e2, svg_1f309, svg_1f3d6, svg_1f3d4, svg_1f3ef, svg_1f3db, svg_1f3dc, svg_1f3d5, svg_1f3e1, svg_1f3e4, svg_1f3df, svg_1f3dd, svg_1f3e6, svg_1f3de, svg_1f54c, svg_1f386, svg_1f387, svg_1f54d, svg_1f3a1, svg_1f3a2, svg_1f303, svg_1f6a0, svg_1f307, svg_1f3f0, svg_1f306, svg_1f3d9, svg_1f5fc, svg_1f304, svg_1f30b, svg_1f30c, svg_1f305, svg_1f5fb];
+
+export default places;

@@ -1,5 +1,3 @@
-@import "node_modules/animate-scss/animate.scss";
-
 $land: #21B256;
 $land-outline: rgba(50,50,50,0.25);
 $ocean: #60E0DC;
@@ -56,22 +54,43 @@ $ocean: #60E0DC;
 
       &.simulatedNode {
         display: inline;
+        overflow: visible;
+      }
+
+      &.comment {
+        display: inline;
+        overflow: visible;;
+        &> path {
+          stroke-width: 15;
+          stroke: black;
+          fill: white;
+        }
+
+        &> svg.attachmentSpecifier {
+          display: inline;
+        }
       }
     }
 
-    .me path {
-      fill: grey;
-      color: grey;
+    .me > path {
+      fill: #555;
+      color: #555;
     }
-    .heart {
-      path {
-        fill: purple;
-        color: purple;
-      }
+    .heart > path {
+      fill: purple;
+      color: purple;
     }
-    .attachment path {
-      fill: teal;
-      color: teal;
+    .attachment-places > path {
+      fill: darkgrey;
+      color: darkgrey;
+    }
+    .attachment-people > path {
+      fill: darkred;
+      color: darkred;
+    }
+    .attachment-animals > path {
+      fill: orange;
+      color: orange;
     }
   }
 
