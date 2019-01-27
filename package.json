@@ -4,10 +4,10 @@
   "description": "Where The Heart Is",
   "scripts": {
     "build-icons": "cd windowdresser && npm install && node windowdresser.js",
-    "build": "webpack",
+    "build-web": "webpack",
     "build-mobile": "webpack",
     "start": "webpack --watch",
-    "deploy": "webpack && surge ./www"
+    "deploy-web": "webpack && surge ./www"
   },
   "repository": {
     "type": "git",

@@ -15,12 +15,16 @@ var buildDate = now.getUTCDate() + "/" +
 var buildTimestamp =  to2Digits(now.getUTCHours()) +
           ":" + to2Digits(now.getUTCMinutes()) + ":" + to2Digits(now.getUTCSeconds());
 
+const PLATFORM_WEB = "web";
+const PLATFORM_MOBILE = "mobile";
+
 /**
  * Env
  * Get npm lifecycle event to identify the environment
  */
 var ENV = process.env.npm_lifecycle_event;
-var isProd = (ENV === 'build' || ENV === 'build-mobile' || ENV === 'deploy');
+var PLATFORM = ENV.includes('mobile') ? PLATFORM_MOBILE : PLATFORM_WEB;
+var isProd = (ENV === 'build-web' || ENV === 'build-mobile' || ENV === 'deploy-web');
 var isCompressed = isProd && ENV !== 'build-mobile';
 
 module.exports = function makeWebpackConfig() {
@@ -150,11 +154,19 @@ module.exports = function makeWebpackConfig() {
   }]));
 
   config.plugins.push(
+    new CopyWebpackPlugin([{
+      from: './static-' + PLATFORM, to: './'
+  }]));
+
+  config.plugins.push(
     new webpack.DefinePlugin({
       'APP_VERSION_NUMBER': JSON.stringify(package.version),
       'BUILD_DATE': JSON.stringify(buildDate),
       'BUILD_TIMESTAMP': JSON.stringify(buildTimestamp),
-      'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development')
+      'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development'),
+      'PLATFORM': JSON.stringify(PLATFORM),
+      'PLATFORM_WEB': JSON.stringify(PLATFORM_WEB),
+      'PLATFORM_MOBILE': JSON.stringify(PLATFORM_MOBILE)
     }));
 
   return config;

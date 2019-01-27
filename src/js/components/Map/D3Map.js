@@ -6,15 +6,7 @@ import stayAtPosition from './Sim/stayAtPosition';
 import forceCollide from './Sim/forceCollide';
 import forceLink from './Sim/link';
 
-import circle from './svg/circle.svg';
-import heart from './svg/heart.svg';
-import user from './svg/user.svg';
-
-const images = {
-  circle,
-  heart,
-  user
-};
+import createSVG from './svg';
 
 import _ from 'lodash';
 
@@ -66,12 +58,6 @@ class D3Map {
 
     this.loadCountries();
     this.setupDrag();
-
-    this.setupImages();
-  }
-
-  setupImages() {
-    
   }
 
   update(el, props, prevProps) {
@@ -132,11 +118,7 @@ class D3Map {
 
     var centrePos = this.centrePos;
     var entering = nodes.enter();
-    entering.select(d => {
-      var range = document.createRange();
-      var documentFragment = range.createContextualFragment(images[d.image]);
-      return this.simulationParent.node().appendChild(documentFragment);
-    });
+    entering.select(d => createSVG(this.simulationParent, d.image));
     updateNodes(
       entering.select('svg')
     );
@@ -277,7 +259,6 @@ class D3Map {
     this.countries.selectAll('path').attr("d", this.countriesPath);
     this.centrePos = this.projection.invert([0,0]);
     this.updateJourney();
-    // this.updateSimulatedNodes();
   }
 
   updatePoints(points) {
@@ -316,10 +297,9 @@ class D3Map {
     this.updateJourneyPaths();
   }
 
-  buildPathBetween = (extraHeight) => ((d) => {
+  buildPathBetween = (extraHeight, minSize = 0.02) => ((d) => {
     var dist = d3.geoDistance(d[0], d[1]);
     if (dist == 0) return '';
-    var minSize = 0.03;
     var intervals = Math.ceil(dist/minSize);
     if (intervals % 2 == 1) intervals++;
     var interpolate = d3.geoInterpolate(d[0], d[1]);
@@ -361,7 +341,6 @@ class D3Map {
   }
 
   destroy(el) {
-
   }
 };
 
