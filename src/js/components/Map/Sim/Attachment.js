@@ -5,21 +5,15 @@ import * as d3 from 'd3';
 import axios from 'axios';
 
 var cities = [];
+var quadtree = null;
 axios.get('/cities.json')
   .then(res => {
     cities = res.data;
+    // quadtree = d3.quadtree(cities);
   });
 
-const quadtree = d3.quadtree(_.map(cities, c => [c.lng, c.lat]));
-
 var randomPlace = () => {
-  if (Math.random() > 0.2) {
-    var city = cities[_.random(cities.length)];
-    return [city.lng, city.lat];
-  } else {
-    var point = [_.random(-180,180,true), _.random(-90,90,true)];
-    return quadtree.find(point[0], point[1]);
-  }
+  return cities[_.random(cities.length)];
 }
 
 const amounts = {
@@ -69,7 +63,7 @@ export default class Attachment {
 
   initTimeToNextTravel() {
     this.timeToNextTravel =
-      moment.duration(Math.pow(_.random(1,4,true), 2),
+      moment.duration(Math.pow(_.random(1,4,true), 1.5),
                       potentialDurations[_.random(potentialDurations.length)]
                     ).valueOf();
   }

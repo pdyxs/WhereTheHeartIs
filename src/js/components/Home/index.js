@@ -8,13 +8,23 @@ import { Link } from 'react-router-dom';
 library.add(faHeart);
 
 class Home extends Component {
-  render() {
-    var hasGeolocation =
-      this.props.isGeolocationAvailable &&
+  handleClick = (e) => {
+    if (!this.hasGeolocation())
+      e.preventDefault();
+  }
+
+  hasGeolocation = () => {
+    return this.props.isGeolocationAvailable &&
       this.props.isGeolocationEnabled &&
       this.props.coords &&
       this.props.coords.latitude &&
       this.props.coords.longitude;
+  }
+
+  render() {
+    console.log(this.props);
+    var hasGeolocation = this.hasGeolocation();
+
     var coords = this.props.coords;
     return (
       <div className="container">
@@ -32,7 +42,7 @@ class Home extends Component {
         </div>
         <div className="text-center my-4">
           <Link role="button"
-            className="btn btn-lg btn-primary mx-2"
+            className={`btn btn-lg btn-primary mx-2 ${hasGeolocation ? '' : 'disabled'}`}
             to={{
               pathname: "/map",
               state: {
@@ -41,8 +51,7 @@ class Home extends Component {
                 latitude: coords?.latitude
               }
             }}
-            disabled={!hasGeolocation}
-            data-toggle="tooltip" data-placement="top" title="Tooltip on top">
+            onClick={this.handleClick}>
             Begin at your location
           </Link>
           <Link role="button" className="btn btn-lg btn-primary mx-2 my-2"
