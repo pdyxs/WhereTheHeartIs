@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 import App from "../js/components/App";
 import { Router, Route } from 'react-router-dom';
 import { createBrowserHistory, createHashHistory } from 'history';
-import store from './store';
+// import store from './store';
 
 var history = null;
 if (PLATFORM == PLATFORM_MOBILE)
@@ -15,10 +15,8 @@ if (PLATFORM == PLATFORM_MOBILE)
 }
 
 render(
-  <Provider store={store}>
-    <Router history={history}>
-      <Route path="/" component={App} />
-    </Router>
-  </Provider>,
+  <Router history={history}>
+    <Route path="/" component={App} />
+  </Router>,
   document.getElementById("app")
 );
