@@ -67,6 +67,7 @@ class Home extends Component {
           </Link>
         </div>
         <div>
+          <p className="lead">I wrote a postmortem of this project <a href="https://medium.com/@pdyxs/deciding-where-the-heart-is-4484b5476fa1">on my blog</a>.</p>
           <p className="lead">This is an open-source project.
             You can get the source code <a href="https://github.com/pdyxs/WhereTheHeartIs">here</a>.</p>
         </div>
